@@ -72,6 +72,8 @@ const Show = ({ auth, allProyects,userLikedProyects }) => {
 
                                             <p className="mb-3 font-normal text-gray-300 dark:text-white">{proyect.description}</p>
 
+                                            <h2 className="mb-3 font-normal      text-lime-600">Pago: {proyect.price} BS</h2>
+
 
 
 
