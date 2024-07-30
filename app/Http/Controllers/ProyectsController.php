@@ -59,8 +59,14 @@ class ProyectsController extends Controller
      */
     public function show(Proyects $proyects)
     {
+        // Obtener todos los proyectos con sus usuarios
         $allProyects = Proyects::with('user')->get();
-        return Inertia::render('Proyects/Show', compact('allProyects'));
+
+        // Obtener los IDs de los proyectos que el usuario ha dado like
+        $userId = Auth::id();
+        $userLikedProyects = LikeP::where('user_id', $userId)->pluck('proyect_id')->toArray();
+
+        return Inertia::render('Proyects/Show', compact('allProyects', 'userLikedProyects'));
     }
 
     /**

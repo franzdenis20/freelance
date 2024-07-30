@@ -4,20 +4,28 @@ import { Head, router } from '@inertiajs/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faWhatsapp, faTelegram } from '@fortawesome/free-brands-svg-icons';
 
-const Show = ({ auth, allServices }) => {
+const Show = ({ auth, allServices, userLikedServices }) => {
+    
     const [services, setServices] = useState([...allServices].reverse());
-
+    const [likedServices, setLikedServices] = useState(userLikedServices);
 
     const handleLike = (serviceId) => {
+        if (likedServices.includes(serviceId)) {
+            return; // El usuario ya dio "like" a este servicio
+        }
+
         // Actualizar el estado de los servicios
         setServices(prevServices =>
             prevServices.map(service =>
                 service.id === serviceId ? {
                     ...service,
-                    reaction: Number(service.reaction) + 1 // Asegúrate de convertir a número
+                    reaction: Number(service.reaction) + 1
                 } : service
             )
         );
+
+        // Marcar el servicio como "liked"
+        setLikedServices([...likedServices, serviceId]);
 
         // Enviar solicitud al servidor
         router.post(route('services.like', serviceId), {}, {
@@ -25,17 +33,16 @@ const Show = ({ auth, allServices }) => {
             onError: (errors) => {
                 console.error(errors);
                 // Revertir el incremento si hay un error
-                setServices(prevProyects =>
-                    prevProyects.map(proyect =>
-                        proyect.id === serviceId ? { ...proyect, reaction: proyect.reaction - 1 } : proyect
+                setServices(prevServices =>
+                    prevServices.map(service =>
+                        service.id === serviceId ? { ...service, reaction: service.reaction - 1 } : service
                     )
                 );
+                // Revertir el estado de likedServices
+                setLikedServices(prevLiked => prevLiked.filter(id => id !== serviceId));
             }
         });
     };
-
-
-
 
     return (
         <AuthenticatedLayout
@@ -68,11 +75,16 @@ const Show = ({ auth, allServices }) => {
 
                                             <p className="mb-3 font-normal text-gray-300 dark:text-white">{service.description}</p>
 
-
-
-
                                             <div className="flex space-x-4">
-                                                <button onClick={() => handleLike(service.id)} className="text-blue-700 border border-blue-700 hover:bg-blue-700 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm p-2.5 text-center inline-flex items-center me-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:focus:ring-blue-800 dark:hover:bg-blue-500">
+                                                <button 
+                                                    onClick={() => handleLike(service.id)} 
+                                                    className={`border font-medium rounded-lg text-sm p-2.5 text-center inline-flex items-center me-2 ${
+                                                        likedServices.includes(service.id) 
+                                                            ? 'text-white bg-blue-700 border-blue-700 dark:bg-blue-500' 
+                                                            : 'text-blue-700 border-blue-700 hover:bg-blue-700 hover:text-white dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500'
+                                                    }`}
+                                                    disabled={likedServices.includes(service.id)}
+                                                >
                                                     <svg className="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 18">
                                                         <path d="M3 7H1a1 1 0 0 0-1 1v8a2 2 0 0 0 4 0V8a1 1 0 0 0-1-1Zm12.954 0H12l1.558-4.5a1.778 1.778 0 0 0-3.331-1.06A24.859 24.859 0 0 1 6 6.8v9.586h.114C8.223 16.969 11.015 18 13.6 18c1.4 0 1.592-.526 1.88-1.317l2.354-7A2 2 0 0 0 15.954 7Z" />
                                                     </svg>

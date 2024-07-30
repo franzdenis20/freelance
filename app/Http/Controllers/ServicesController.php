@@ -19,7 +19,7 @@ class ServicesController extends Controller
     public function index()
     {
         $myservices = Services::where('user_id', Auth::user()->id)->get();
-        return Inertia::render('Services/Index',compact('myservices'));
+        return Inertia::render('Services/Index', compact('myservices'));
     }
 
     /**
@@ -45,7 +45,7 @@ class ServicesController extends Controller
         $data['reaction'] = 0;
         $data['user_id'] = Auth::user()->id;
         // Logging para verificar los datos
-        
+
         Services::create($data);
 
         return to_route('myservices.index');
@@ -57,7 +57,12 @@ class ServicesController extends Controller
     public function show(Services $services)
     {
         $allServices = Services::with('user')->get();
-        return Inertia::render('Services/Show', compact('allServices'));
+
+        // Obtén los IDs de los servicios que el usuario ha dado like
+        $userId = Auth::id();
+        $userLikedServices = LikeS::where('user_id', $userId)->pluck('service_id')->toArray();
+
+        return Inertia::render('Services/Show', compact('allServices', 'userLikedServices'));
     }
 
     /**
@@ -83,13 +88,13 @@ class ServicesController extends Controller
                 Storage::disk('public')->delete($services->img);
             }
         }
-        
+
         $data['user_id'] = Auth::user()->id;
         // Logging para verificar los datos
-        
+
         $services->update($data);
 
-        return to_route('myservices.index',$services);
+        return to_route('myservices.index', $services);
     }
 
     /**
