@@ -137,4 +137,23 @@ class ProyectsController extends Controller
 
         return redirect()->back()->with('message', 'Ya le diste like a este proyecto')->with('proyect_id', $id);
     }
+
+    //lista los proyecto de un usuario
+
+    public function userProyects($id)
+    {
+        // Obtener todos los proyectos del usuario
+        $userProyects = Proyects::where('user_id', $id)->with('user')->get();
+
+        // Obtener los IDs de los proyectos que el usuario ha dado like
+        $userLikedProyects = LikeP::where('user_id', $id)->pluck('proyect_id')->toArray();
+
+        
+
+        // Pasar las variables a la vista usando el nombre correcto
+        return Inertia::render('Proyects/User', [
+            'userProyects' => $userProyects,
+            'userLikedProyects' => $userLikedProyects
+        ]);
+    }
 }

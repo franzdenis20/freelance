@@ -48,6 +48,13 @@ Route::prefix('dashboard')->middleware('auth')->group(function () {
 
     //Likes Proyectos
     Route::post('/dashboard/proyects/{id}/like', [ProyectsController::class, 'like'])->name('proyects.like');
+
+    // listar todos los proyectos de un solo usuario
+
+    Route::get('/user/{id}/proyects', [ProyectsController::class, 'userProyects'])->name('user.proyects');
+
+
+
     // routes/web.php
 
 
@@ -74,6 +81,9 @@ Route::prefix('dashboard')->middleware('auth')->group(function () {
     //ruta para dar like a servicios
 
     Route::post('/services/{id}/like', [ServicesController::class, 'like'])->name('services.like');
+
+
+    
 
 });
 

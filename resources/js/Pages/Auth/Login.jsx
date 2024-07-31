@@ -30,12 +30,17 @@ export default function Login({ status, canResetPassword }) {
 
 
             <form onSubmit={submit}>
-                <img
-                    src="/img/logo.png"
-                    alt="Logo"
-                    className="w-150 ml-8"
 
-                />
+                <div className='flex justify-center mb-4'>
+                    <img
+                        src="/img/logo.png"
+                        alt="Logo"
+                        className="w-32 md:w-48 lg:w-56"
+
+                    />
+
+                </div>
+
                 <div>
                     <InputLabel htmlFor="email" value="Email" />
 
@@ -79,7 +84,7 @@ export default function Login({ status, canResetPassword }) {
                         <span className="ms-2 text-sm text-gray-600">Remember me</span>
                     </label>
                 </div>
-                <div className='ml-5'>
+                <div className='flex w-full  items-center justify-center mb-4'>
                     <PrimaryButton className="ms-4 w-80 items-center justify-center m-4" disabled={processing}>
                         <p>Log in</p>
                     </PrimaryButton>
